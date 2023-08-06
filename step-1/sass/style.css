@@ -1,0 +1,52 @@
+body {
+  margin: 8px;
+}
+
+table,
+tr,
+td,
+th {
+  text-align: center;
+  border: 1px solid darkgray;
+}
+
+td,
+th {
+  padding: 10px;
+}
+
+button {
+  margin: 22px 0;
+  cursor: pointer;
+  padding: 10px;
+  border: 2px solid darkgray;
+}
+
+table {
+  width: 100%;
+  display: table;
+  border-collapse: separate;
+  box-sizing: border-box;
+  text-indent: initial;
+  border-spacing: 2px;
+  border-color: gray;
+}
+
+td, th {
+  padding: 10px;
+}
+
+table, tr, td, th {
+  text-align: center;
+  border: 1px solid darkgray;
+}
+
+th {
+  display: table-cell;
+  vertical-align: inherit;
+  font-weight: bold;
+}
+
+td {
+  vertical-align: middle;
+}/*# sourceMappingURL=style.css.map */
