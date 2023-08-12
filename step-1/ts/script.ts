@@ -44,6 +44,7 @@ const createErrorField = (obj: { [key: string]: any }): void => {
 };
 
 const createUserTable = function (user: User): void {
+  clearPreviousData();
   const table: HTMLTableElement = document.createElement('table');
   const tableHead: string[] = ['photo', 'name', 'gender', 'age', 'phone', 'address', 'email'];
   table.id = 'user';

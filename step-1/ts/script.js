@@ -65,6 +65,7 @@ var createErrorField = function (obj) {
     document.body.appendChild(error);
 };
 var createUserTable = function (user) {
+    clearPreviousData();
     var table = document.createElement('table');
     var tableHead = ['photo', 'name', 'gender', 'age', 'phone', 'address', 'email'];
     table.id = 'user';
