@@ -35,34 +35,131 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
     }
 };
 var _this = this;
-var button = document.body.querySelector('button');
-var body = document.querySelector('body');
+var button = document
+    .body.querySelector('button');
+var removeUserTable = function () {
+    var userTable = document.getElementById('user');
+    if (userTable) {
+        document.body.removeChild(userTable);
+    }
+};
+var removeErrorField = function () {
+    var errorField = document.getElementById('error');
+    if (errorField) {
+        document.body.removeChild(errorField);
+    }
+};
+var clearPreviousData = function () {
+    removeUserTable();
+    removeErrorField();
+};
+var createErrorField = function (obj) {
+    clearPreviousData();
+    var error = document.createElement('error');
+    error.id = 'error';
+    Object.keys(obj).forEach(function (key, index) {
+        var value = obj[key];
+        var newLine = "".concat(index === 0 ? '' : '\n').concat(String(key), ": ").concat(String(value));
+        error.innerHTML += newLine;
+    });
+    document.body.appendChild(error);
+};
 var createUserTable = function (user) {
     var table = document.createElement('table');
+    var tableHead = ['photo', 'name', 'gender', 'age', 'phone', 'address', 'email'];
+    table.id = 'user';
+    var trHead = document.createElement('tr');
+    tableHead.forEach(function (name) {
+        var th = document.createElement('th');
+        th.innerText = String(name[0].toUpperCase() + name.slice(1));
+        trHead.appendChild(th);
+    });
+    table.appendChild(trHead);
+    var trRow = document.createElement('tr');
+    tableHead.forEach(function (name) {
+        if (name === 'username' || name === 'title') {
+            return;
+        }
+        var td = document.createElement('td');
+        if (name === 'photo') {
+            var img = document.createElement('img');
+            img.src = user[name];
+            img.alt = String(user.username);
+            img.title = user.title;
+            td.appendChild(img);
+            trRow.appendChild(td);
+            return;
+        }
+        td.innerText = String(user[name]);
+        trRow.appendChild(td);
+    });
+    table.appendChild(trRow);
+    document.body.appendChild(table);
+    button.disabled = false;
+    document.body.appendChild(table);
 };
-button === null || button === void 0 ? void 0 : button.addEventListener('click', function () { return __awaiter(_this, void 0, void 0, function () {
+var normalizeStringData = function (str) {
+    return [str].flat(2).join(' ').replace(/ +/, ' ').trim();
+};
+var parseUserData = function (data) {
+    var user = data;
+    createUserTable({
+        photo: user.picture.medium,
+        name: normalizeStringData([
+            user.name.first,
+            user.name.last,
+        ]),
+        gender: user.gender,
+        age: user.dob.age,
+        phone: user.cell,
+        address: normalizeStringData([
+            "".concat(String(user.location.street.number).trim(), ","),
+            user.location.street.name,
+            user.location.country,
+            "".concat(String(user.location.state).trim(), ","),
+            user.location.postcode,
+        ]),
+        email: user.email,
+        username: user.login.username,
+        title: normalizeStringData([
+            user.name.title,
+            user.name.first,
+            user.name.last,
+            "[".concat(user.nat, "]"),
+        ]),
+    });
+};
+button.onclick = function () { return __awaiter(_this, void 0, void 0, function () {
+    var error, response, data, user, e_1;
     return __generator(this, function (_a) {
         switch (_a.label) {
-            case 0: return [4 /*yield*/, fetchHandler()];
+            case 0:
+                button.disabled = true;
+                error = { status: 0 };
+                _a.label = 1;
             case 1:
-                _a.sent();
+                _a.trys.push([1, 4, , 5]);
+                return [4 /*yield*/, fetch('https://randomuser.me/api/')];
+            case 2:
+                response = _a.sent();
+                if (!response.ok) {
+                    error.status = response.status;
+                    throw Error(response.statusText);
+                }
+                return [4 /*yield*/, response.json()];
+            case 3:
+                data = _a.sent();
+                user = data.results[0];
+                parseUserData(user);
+                return [3 /*break*/, 5];
+            case 4:
+                e_1 = _a.sent();
+                error.message = e_1.message;
+                error.stack = e_1.stack;
+                button.disabled = false;
+                createErrorField(error);
                 return [2 /*return*/];
+            case 5: return [2 /*return*/];
         }
     });
-}); });
-function fetchHandler() {
-    return __awaiter(this, void 0, void 0, function () {
-        var res, data;
-        return __generator(this, function (_a) {
-            switch (_a.label) {
-                case 0: return [4 /*yield*/, fetch('https://randomuser.me/api/')];
-                case 1:
-                    res = _a.sent();
-                    return [4 /*yield*/, res.json()];
-                case 2:
-                    data = _a.sent();
-                    return [2 /*return*/, console.log('data', data)];
-            }
-        });
-    });
-}
+}); };
