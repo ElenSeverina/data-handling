@@ -35,55 +35,35 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
     }
 };
 var _this = this;
-var button = document
-    .body.querySelector('button');
-var removeUserTable = function () {
-    var userTable = document.getElementById('user');
-    if (userTable) {
-        document.body.removeChild(userTable);
-    }
-};
-var removeErrorField = function () {
-    var errorField = document.getElementById('error');
-    if (errorField) {
-        document.body.removeChild(errorField);
-    }
-};
-var clearPreviousData = function () {
-    removeUserTable();
-    removeErrorField();
-};
-var createErrorField = function (obj) {
-    clearPreviousData();
-    var error = document.createElement('error');
-    error.id = 'error';
-    Object.keys(obj).forEach(function (key, index) {
-        var value = obj[key];
-        var newLine = "".concat(index === 0 ? '' : '\n').concat(String(key), ": ").concat(String(value));
-        error.innerHTML += newLine;
-    });
-    document.body.appendChild(error);
-};
+var button = document.body.querySelector("button");
 var createUserTable = function (user) {
     clearPreviousData();
-    var table = document.createElement('table');
-    var tableHead = ['photo', 'name', 'gender', 'age', 'phone', 'address', 'email'];
-    table.id = 'user';
-    var trHead = document.createElement('tr');
+    var table = document.createElement("table");
+    var tableHead = [
+        "photo",
+        "name",
+        "gender",
+        "age",
+        "phone",
+        "address",
+        "email",
+    ];
+    table.id = "user";
+    var trHead = document.createElement("tr");
     tableHead.forEach(function (name) {
-        var th = document.createElement('th');
+        var th = document.createElement("th");
         th.innerText = String(name[0].toUpperCase() + name.slice(1));
         trHead.appendChild(th);
     });
     table.appendChild(trHead);
-    var trRow = document.createElement('tr');
+    var trRow = document.createElement("tr");
     tableHead.forEach(function (name) {
-        if (name === 'username' || name === 'title') {
+        if (name === "username" || name === "title") {
             return;
         }
-        var td = document.createElement('td');
-        if (name === 'photo') {
-            var img = document.createElement('img');
+        var td = document.createElement("td");
+        if (name === "photo") {
+            var img = document.createElement("img");
             img.src = user[name];
             img.alt = String(user.username);
             img.title = user.title;
@@ -99,21 +79,45 @@ var createUserTable = function (user) {
     button.disabled = false;
     document.body.appendChild(table);
 };
-var normalizeStringData = function (str) {
-    return [str].flat(2).join(' ').replace(/ +/, ' ').trim();
+var normalizeData = function (str) {
+    return [str].flat(2).join(" ").replace(/ +/, " ").trim();
+};
+var removeUserTable = function () {
+    var userTable = document.getElementById("user");
+    if (userTable) {
+        document.body.removeChild(userTable);
+    }
+};
+var createErrorField = function (obj) {
+    clearPreviousData();
+    var error = document.createElement("error");
+    error.id = "error";
+    Object.keys(obj).forEach(function (key, index) {
+        var value = obj[key];
+        var newLine = "".concat(index === 0 ? "" : "\n").concat(String(key), ": ").concat(String(value));
+        error.innerHTML += newLine;
+    });
+    document.body.appendChild(error);
+};
+var removeErrorField = function () {
+    var errorField = document.getElementById("error");
+    if (errorField) {
+        document.body.removeChild(errorField);
+    }
+};
+var clearPreviousData = function () {
+    removeUserTable();
+    removeErrorField();
 };
 var parseUserData = function (data) {
     var user = data;
     createUserTable({
         photo: user.picture.medium,
-        name: normalizeStringData([
-            user.name.first,
-            user.name.last,
-        ]),
+        name: normalizeData([user.name.first, user.name.last]),
         gender: user.gender,
         age: user.dob.age,
         phone: user.cell,
-        address: normalizeStringData([
+        address: normalizeData([
             "".concat(String(user.location.street.number).trim(), ","),
             user.location.street.name,
             user.location.country,
@@ -122,7 +126,7 @@ var parseUserData = function (data) {
         ]),
         email: user.email,
         username: user.login.username,
-        title: normalizeStringData([
+        title: normalizeData([
             user.name.title,
             user.name.first,
             user.name.last,
@@ -136,11 +140,13 @@ button.onclick = function () { return __awaiter(_this, void 0, void 0, function 
         switch (_a.label) {
             case 0:
                 button.disabled = true;
-                error = { status: 0 };
+                error = {
+                    status: 0,
+                };
                 _a.label = 1;
             case 1:
                 _a.trys.push([1, 4, , 5]);
-                return [4 /*yield*/, fetch('https://randomuser.me/api/')];
+                return [4 /*yield*/, fetch("https://randomuser.me/api/")];
             case 2:
                 response = _a.sent();
                 if (!response.ok) {

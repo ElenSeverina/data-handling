@@ -1,5 +1,4 @@
-const button = document
-  .body.querySelector('button') as HTMLButtonElement;
+const button = document.body.querySelector("button") as HTMLButtonElement;
 
 interface User {
   photo: string;
@@ -9,82 +8,9 @@ interface User {
   phone: string;
   address: string;
   email: string;
-  username: string; 
+  username: string;
   title: string;
 }
-
-const removeUserTable = (): void => {
-  const userTable: HTMLElement = document.getElementById('user');
-  if (userTable) {
-    document.body.removeChild(userTable);
-  }
-};
-
-const removeErrorField = (): void => {
-  const errorField: HTMLElement = document.getElementById('error');
-  if (errorField) {
-    document.body.removeChild(errorField);
-  }
-};
-const clearPreviousData = (): void => {
-  removeUserTable();
-  removeErrorField();
-};
-
-const createErrorField = (obj: { [key: string]: any }): void => {
-  clearPreviousData();
-  const error: HTMLElement = document.createElement('error');
-  error.id = 'error';
-  Object.keys(obj).forEach((key, index) => {
-    const value = obj[key];
-    const newLine = `${index === 0 ? '' : '\n'}${String(key)}: ${String(value)}`;
-    error.innerHTML += newLine;
-  });
-  document.body.appendChild(error);
-};
-
-const createUserTable = function (user: User): void {
-  clearPreviousData();
-  const table: HTMLTableElement = document.createElement('table');
-  const tableHead: string[] = ['photo', 'name', 'gender', 'age', 'phone', 'address', 'email'];
-  table.id = 'user';
-    
-  const trHead: HTMLTableRowElement = document.createElement('tr');
-    tableHead.forEach(function (name: string) {
-      const th: HTMLTableCellElement = document.createElement('th');
-      th.innerText = String(name[0].toUpperCase() + name.slice(1));
-      trHead.appendChild(th);
-    });
-    table.appendChild(trHead);
-    
-    const trRow: HTMLTableRowElement = document.createElement('tr');
-    tableHead.forEach((name) => {
-      if (name === 'username' || name === 'title') {
-        return;
-      }
-      const td: HTMLTableCellElement = document.createElement('td');
-      if (name === 'photo') {
-        const img: HTMLImageElement = document.createElement('img');
-        img.src = user[name];
-        img.alt = String(user.username);
-        img.title = user.title;
-        td.appendChild(img);
-        trRow.appendChild(td);
-        return;
-      }
-      td.innerText = String(user[name]);
-      trRow.appendChild(td);
-    });
-    table.appendChild(trRow);
-    document.body.appendChild(table);
-    button.disabled = false;
-
-  document.body.appendChild(table);
-};
-
-const normalizeStringData = function (str: string[]): string {
-  return [str].flat(2).join(' ').replace(/ +/, ' ').trim();
-};
 
 interface UserData {
   picture: {
@@ -116,18 +42,103 @@ interface UserData {
   nat: string;
 }
 
+interface RandomUserData {
+  results: UserData[];
+}
+
+const createUserTable = function (user: User): void {
+  clearPreviousData();
+  const table: HTMLTableElement = document.createElement("table");
+  const tableHead: string[] = [
+    "photo",
+    "name",
+    "gender",
+    "age",
+    "phone",
+    "address",
+    "email",
+  ];
+  table.id = "user";
+
+  const trHead: HTMLTableRowElement = document.createElement("tr");
+  tableHead.forEach(function (name: string) {
+    const th: HTMLTableCellElement = document.createElement("th");
+    th.innerText = String(name[0].toUpperCase() + name.slice(1));
+    trHead.appendChild(th);
+  });
+  table.appendChild(trHead);
+
+  const trRow: HTMLTableRowElement = document.createElement("tr");
+  tableHead.forEach((name) => {
+    if (name === "username" || name === "title") {
+      return;
+    }
+    const td: HTMLTableCellElement = document.createElement("td");
+    if (name === "photo") {
+      const img: HTMLImageElement = document.createElement("img");
+      img.src = user[name];
+      img.alt = String(user.username);
+      img.title = user.title;
+      td.appendChild(img);
+      trRow.appendChild(td);
+      return;
+    }
+    td.innerText = String(user[name]);
+    trRow.appendChild(td);
+  });
+  table.appendChild(trRow);
+  document.body.appendChild(table);
+  button.disabled = false;
+
+  document.body.appendChild(table);
+};
+
+const normalizeData = function (str: string[]): string {
+  return [str].flat(2).join(" ").replace(/ +/, " ").trim();
+};
+
+const removeUserTable = (): void => {
+  const userTable: HTMLElement = document.getElementById("user");
+  if (userTable) {
+    document.body.removeChild(userTable);
+  }
+};
+
+const createErrorField = (obj: { [key: string]: any }): void => {
+  clearPreviousData();
+  const error: HTMLElement = document.createElement("error");
+  error.id = "error";
+  Object.keys(obj).forEach((key, index) => {
+    const value = obj[key];
+    const newLine = `${index === 0 ? "" : "\n"}${String(key)}: ${String(
+      value
+    )}`;
+    error.innerHTML += newLine;
+  });
+  document.body.appendChild(error);
+};
+
+const removeErrorField = (): void => {
+  const errorField: HTMLElement = document.getElementById("error");
+  if (errorField) {
+    document.body.removeChild(errorField);
+  }
+};
+
+const clearPreviousData = (): void => {
+  removeUserTable();
+  removeErrorField();
+};
+
 const parseUserData = (data: UserData): void => {
   const user: UserData = data;
   createUserTable({
     photo: user.picture.medium,
-    name: normalizeStringData([
-      user.name.first,
-      user.name.last,
-    ]),
+    name: normalizeData([user.name.first, user.name.last]),
     gender: user.gender,
     age: user.dob.age,
     phone: user.cell,
-    address: normalizeStringData([
+    address: normalizeData([
       `${String(user.location.street.number).trim()},`,
       user.location.street.name,
       user.location.country,
@@ -136,7 +147,7 @@ const parseUserData = (data: UserData): void => {
     ]),
     email: user.email,
     username: user.login.username,
-    title: normalizeStringData([
+    title: normalizeData([
       user.name.title,
       user.name.first,
       user.name.last,
@@ -145,15 +156,13 @@ const parseUserData = (data: UserData): void => {
   });
 };
 
-interface RandomUserData {
-  results: UserData[];
-}
-
 button.onclick = async (): Promise<void> => {
   button.disabled = true;
-  const error: { status: number; message?: string; stack?: string } = { status: 0 };
+  const error: { status: number; message?: string; stack?: string } = {
+    status: 0,
+  };
   try {
-    const response: Response = await fetch('https://randomuser.me/api/');
+    const response: Response = await fetch("https://randomuser.me/api/");
     if (!response.ok) {
       error.status = response.status;
       throw Error(response.statusText);
