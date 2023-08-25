@@ -79,6 +79,23 @@ var createUserTable = function (user) {
     button.disabled = false;
     document.body.appendChild(table);
 };
+var createErrorField = function (obj) {
+    clearPreviousData();
+    var error = document.createElement("div");
+    error.id = "error";
+    var preElement = document.createElement("pre");
+    preElement.textContent = Object.keys(obj)
+        .map(function (key) {
+        var value = String(obj[key]);
+        if (key === "stack") {
+            value = value.replace(/\n/g, "\n\t");
+        }
+        return "".concat(key, ": ").concat(value);
+    })
+        .join("\n");
+    error.appendChild(preElement);
+    document.body.appendChild(error);
+};
 var normalizeData = function (str) {
     return [str].flat(2).join(" ").replace(/ +/, " ").trim();
 };
@@ -87,17 +104,6 @@ var removeUserTable = function () {
     if (userTable) {
         document.body.removeChild(userTable);
     }
-};
-var createErrorField = function (obj) {
-    clearPreviousData();
-    var error = document.createElement("error");
-    error.id = "error";
-    Object.keys(obj).forEach(function (key, index) {
-        var value = obj[key];
-        var newLine = "".concat(index === 0 ? "" : "\n").concat(String(key), ": ").concat(String(value));
-        error.innerHTML += newLine;
-    });
-    document.body.appendChild(error);
 };
 var removeErrorField = function () {
     var errorField = document.getElementById("error");

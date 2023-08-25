@@ -93,6 +93,26 @@ const createUserTable = function (user: User): void {
   document.body.appendChild(table);
 };
 
+const createErrorField = (obj: { [key: string]: any }): void => {
+  clearPreviousData();
+  const error: HTMLElement = document.createElement("div");
+  error.id = "error";
+  const preElement: HTMLElement = document.createElement("pre");
+  preElement.textContent = Object.keys(obj)
+    .map((key: string) => {
+      let value: string = String(obj[key]);
+
+      if (key === "stack") {
+        value = value.replace(/\n/g, "\n\t");
+      }
+      return `${key}: ${value}`;
+    })
+    .join("\n");
+
+  error.appendChild(preElement);
+  document.body.appendChild(error);
+};
+
 const normalizeData = function (str: string[]): string {
   return [str].flat(2).join(" ").replace(/ +/, " ").trim();
 };
@@ -102,20 +122,6 @@ const removeUserTable = (): void => {
   if (userTable) {
     document.body.removeChild(userTable);
   }
-};
-
-const createErrorField = (obj: { [key: string]: any }): void => {
-  clearPreviousData();
-  const error: HTMLElement = document.createElement("error");
-  error.id = "error";
-  Object.keys(obj).forEach((key, index) => {
-    const value = obj[key];
-    const newLine = `${index === 0 ? "" : "\n"}${String(key)}: ${String(
-      value
-    )}`;
-    error.innerHTML += newLine;
-  });
-  document.body.appendChild(error);
 };
 
 const removeErrorField = (): void => {
