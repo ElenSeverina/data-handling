@@ -184,3 +184,7 @@ button.onclick = async (): Promise<void> => {
     return;
   }
 };
+
+export const createLog = () => {
+  console.log('create log');
+};
