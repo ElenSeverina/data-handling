@@ -93,7 +93,7 @@ const createUserTable = function (user: User): void {
   document.body.appendChild(table);
 };
 
-const createErrorField = (obj: { [key: string]: any }): void => {
+export const createErrorField = (obj: { [key: string]: any }): void => {
   clearPreviousData();
   const error: HTMLElement = document.createElement("div");
   error.id = "error";
