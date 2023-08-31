@@ -1,5 +1,13 @@
 const button = document.body.querySelector("button") as HTMLButtonElement;
-
+const tableHead: string[] = [
+  "photo",
+  "name",
+  "gender",
+  "age",
+  "phone",
+  "address",
+  "email",
+];
 interface User {
   photo: string;
   name: string;
@@ -46,28 +54,33 @@ interface RandomUserData {
   results: UserData[];
 }
 
-const createUserTable = function (user: User): void {
-  clearPreviousData();
+const createUserTable = function (): void {
   const table: HTMLTableElement = document.createElement("table");
-  const tableHead: string[] = [
-    "photo",
-    "name",
-    "gender",
-    "age",
-    "phone",
-    "address",
-    "email",
-  ];
   table.id = "user";
+  document.body.appendChild(table);
+  button.disabled = false;
+};
+
+const createUserTableHeader = function (): void {
+  createUserTable();
 
   const trHead: HTMLTableRowElement = document.createElement("tr");
+  const table: HTMLElement = document.getElementById("user");
+  if (!table) {
+    console.error("Table with id 'user' not found.");
+    return;
+  }
+
   tableHead.forEach(function (name: string) {
-    const th: HTMLTableCellElement = document.createElement("th");
-    th.innerText = String(name[0].toUpperCase() + name.slice(1));
-    trHead.appendChild(th);
+    const thHead: HTMLTableCellElement = document.createElement("th");
+    thHead.innerText = String(name[0].toUpperCase() + name.slice(1));
+    trHead.appendChild(thHead);
   });
   table.appendChild(trHead);
+}
 
+const createUserTableRow = function (user: User): void {
+  const table: HTMLElement = document.getElementById("user");
   const trRow: HTMLTableRowElement = document.createElement("tr");
   tableHead.forEach((name) => {
     if (name === "username" || name === "title") {
@@ -93,7 +106,7 @@ const createUserTable = function (user: User): void {
   document.body.appendChild(table);
 };
 
-export const createErrorField = (obj: { [key: string]: any }): void => {
+const createErrorField = (obj: { [key: string]: any }): void => {
   clearPreviousData();
   const error: HTMLElement = document.createElement("div");
   error.id = "error";
@@ -118,16 +131,17 @@ const normalizeData = function (str: string[]): string {
 };
 
 const removeUserTable = (): void => {
-  const userTable: HTMLElement = document.getElementById("user");
-  if (userTable) {
-    document.body.removeChild(userTable);
+  const table: HTMLElement = document.getElementById("user");
+  if (table) {
+    table.remove();
   }
+  console.log('done');
 };
 
 const removeErrorField = (): void => {
   const errorField: HTMLElement = document.getElementById("error");
   if (errorField) {
-    document.body.removeChild(errorField);
+    errorField.remove();
   }
 };
 
@@ -138,7 +152,7 @@ const clearPreviousData = (): void => {
 
 const parseUserData = (data: UserData): void => {
   const user: UserData = data;
-  createUserTable({
+  createUserTableRow({
     photo: user.picture.medium,
     name: normalizeData([user.name.first, user.name.last]),
     gender: user.gender,
@@ -163,6 +177,8 @@ const parseUserData = (data: UserData): void => {
 };
 
 button.onclick = async (): Promise<void> => {
+  clearPreviousData();
+  createUserTableHeader();
   button.disabled = true;
   const error: { status: number; message?: string; stack?: string } = {
     status: 0,
@@ -183,8 +199,4 @@ button.onclick = async (): Promise<void> => {
     createErrorField(error);
     return;
   }
-};
-
-export const createLog = () => {
-  console.log('create log');
 };
