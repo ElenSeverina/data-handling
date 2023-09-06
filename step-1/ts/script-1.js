@@ -1,3 +1,4 @@
+"use strict";
 var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
     function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
     return new (P || (P = Promise))(function (resolve, reject) {
@@ -34,7 +35,8 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
         if (op[0] & 5) throw op[1]; return { value: op[0] ? op[1] : void 0, done: true };
     }
 };
-var _this = this;
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.buttonClickHandler = exports.createUserTableRow = exports.removeErrorField = exports.removeUserTable = exports.normalizeData = exports.createErrorField = exports.createUserTableHeader = exports.createUserTable = void 0;
 var button = document.body.querySelector("button");
 var tableHead = [
     "photo",
@@ -51,14 +53,10 @@ var createUserTable = function () {
     document.body.appendChild(table);
     button.disabled = false;
 };
+exports.createUserTable = createUserTable;
 var createUserTableHeader = function () {
-    createUserTable();
     var trHead = document.createElement("tr");
     var table = document.getElementById("user");
-    if (!table) {
-        console.error("Table with id 'user' not found.");
-        return;
-    }
     tableHead.forEach(function (name) {
         var thHead = document.createElement("th");
         thHead.innerText = String(name[0].toUpperCase() + name.slice(1));
@@ -66,33 +64,8 @@ var createUserTableHeader = function () {
     });
     table.appendChild(trHead);
 };
-var createUserTableRow = function (user) {
-    var table = document.getElementById("user");
-    var trRow = document.createElement("tr");
-    tableHead.forEach(function (name) {
-        if (name === "username" || name === "title") {
-            return;
-        }
-        var td = document.createElement("td");
-        if (name === "photo") {
-            var img = document.createElement("img");
-            img.src = user[name];
-            img.alt = String(user.username);
-            img.title = user.title;
-            td.appendChild(img);
-            trRow.appendChild(td);
-            return;
-        }
-        td.innerText = String(user[name]);
-        trRow.appendChild(td);
-    });
-    table.appendChild(trRow);
-    document.body.appendChild(table);
-    button.disabled = false;
-    document.body.appendChild(table);
-};
+exports.createUserTableHeader = createUserTableHeader;
 var createErrorField = function (obj) {
-    clearPreviousData();
     var error = document.createElement("div");
     error.id = "error";
     var preElement = document.createElement("pre");
@@ -108,35 +81,33 @@ var createErrorField = function (obj) {
     error.appendChild(preElement);
     document.body.appendChild(error);
 };
+exports.createErrorField = createErrorField;
 var normalizeData = function (str) {
     return [str].flat(2).join(" ").replace(/ +/, " ").trim();
 };
+exports.normalizeData = normalizeData;
 var removeUserTable = function () {
     var table = document.getElementById("user");
     if (table) {
         table.remove();
     }
-    console.log('done');
 };
+exports.removeUserTable = removeUserTable;
 var removeErrorField = function () {
     var errorField = document.getElementById("error");
     if (errorField) {
         errorField.remove();
     }
 };
-var clearPreviousData = function () {
-    removeUserTable();
-    removeErrorField();
-};
-var parseUserData = function (data) {
-    var user = data;
-    createUserTableRow({
-        photo: user.picture.medium,
-        name: normalizeData([user.name.first, user.name.last]),
+exports.removeErrorField = removeErrorField;
+var createUserTableRow = function (user) {
+    return {
+        photo: "<img src=\"".concat(user.picture.medium, "\" alt=\"").concat(user.login.username, "\" title=\"").concat((0, exports.normalizeData)([user.name.title, user.name.first, user.name.last, "[".concat(user.nat, "]")]), "\" />"),
+        name: (0, exports.normalizeData)([user.name.first, user.name.last]),
         gender: user.gender,
         age: user.dob.age,
         phone: user.cell,
-        address: normalizeData([
+        address: (0, exports.normalizeData)([
             "".concat(String(user.location.street.number).trim(), ","),
             user.location.street.name,
             user.location.country,
@@ -145,21 +116,17 @@ var parseUserData = function (data) {
         ]),
         email: user.email,
         username: user.login.username,
-        title: normalizeData([
-            user.name.title,
-            user.name.first,
-            user.name.last,
-            "[".concat(user.nat, "]"),
-        ]),
-    });
+        title: (0, exports.normalizeData)([user.name.title, user.name.first, user.name.last, "[".concat(user.nat, "]")]),
+    };
 };
-button.onclick = function () { return __awaiter(_this, void 0, void 0, function () {
-    var error, response, data, user, e_1;
+exports.createUserTableRow = createUserTableRow;
+var buttonClickHandler = function () { return __awaiter(void 0, void 0, void 0, function () {
+    var error, response, data, user, userData_1, table, trRow_1, e_1;
     return __generator(this, function (_a) {
         switch (_a.label) {
             case 0:
-                clearPreviousData();
-                createUserTableHeader();
+                (0, exports.removeUserTable)();
+                (0, exports.removeErrorField)();
                 button.disabled = true;
                 error = {
                     status: 0,
@@ -178,16 +145,38 @@ button.onclick = function () { return __awaiter(_this, void 0, void 0, function 
             case 3:
                 data = _a.sent();
                 user = data.results[0];
-                parseUserData(user);
+                (0, exports.createUserTable)();
+                (0, exports.createUserTableHeader)();
+                userData_1 = (0, exports.createUserTableRow)(user);
+                table = document.getElementById("user");
+                trRow_1 = document.createElement("tr");
+                tableHead.forEach(function (name) {
+                    if (name === "username" || name === "title") {
+                        return;
+                    }
+                    var td = document.createElement("td");
+                    if (name === "photo") {
+                        td.innerHTML = userData_1[name];
+                    }
+                    else {
+                        td.innerText = String(userData_1[name]);
+                    }
+                    trRow_1.appendChild(td);
+                });
+                table.appendChild(trRow_1);
+                document.body.appendChild(table);
+                button.disabled = false;
                 return [3 /*break*/, 5];
             case 4:
                 e_1 = _a.sent();
                 error.message = e_1.message;
                 error.stack = e_1.stack;
                 button.disabled = false;
-                createErrorField(error);
+                (0, exports.createErrorField)(error);
                 return [2 /*return*/];
             case 5: return [2 /*return*/];
         }
     });
 }); };
+exports.buttonClickHandler = buttonClickHandler;
+button.onclick = exports.buttonClickHandler;
