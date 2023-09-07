@@ -131,7 +131,7 @@ export const createUserTableRow = function (user: UserData): User {
   };
 };
 
-export const buttonClickHandler = async (): Promise<void> => {
+button.onclick = async (): Promise<void> => {
   removeUserTable();
   removeErrorField();
 
@@ -178,5 +178,3 @@ export const buttonClickHandler = async (): Promise<void> => {
     return;
   }
 };
-
-button.onclick = buttonClickHandler;

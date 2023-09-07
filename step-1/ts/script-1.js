@@ -36,7 +36,7 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
     }
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.buttonClickHandler = exports.createUserTableRow = exports.removeErrorField = exports.removeUserTable = exports.normalizeData = exports.createErrorField = exports.createUserTableHeader = exports.createUserTable = void 0;
+exports.createUserTableRow = exports.removeErrorField = exports.removeUserTable = exports.normalizeData = exports.createErrorField = exports.createUserTableHeader = exports.createUserTable = void 0;
 var button = document.body.querySelector("button");
 var tableHead = [
     "photo",
@@ -120,7 +120,7 @@ var createUserTableRow = function (user) {
     };
 };
 exports.createUserTableRow = createUserTableRow;
-var buttonClickHandler = function () { return __awaiter(void 0, void 0, void 0, function () {
+button.onclick = function () { return __awaiter(void 0, void 0, void 0, function () {
     var error, response, data, user, userData_1, table, trRow_1, e_1;
     return __generator(this, function (_a) {
         switch (_a.label) {
@@ -178,5 +178,3 @@ var buttonClickHandler = function () { return __awaiter(void 0, void 0, void 0, 
         }
     });
 }); };
-exports.buttonClickHandler = buttonClickHandler;
-button.onclick = exports.buttonClickHandler;
