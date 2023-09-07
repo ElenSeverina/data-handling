@@ -1,5 +1,5 @@
 const button = document.body.querySelector("button") as HTMLButtonElement;
-const tableHead: string[] = [
+export const tableHead: string[] = [
   "photo",
   "name",
   "gender",
@@ -9,7 +9,7 @@ const tableHead: string[] = [
   "email",
 ];
 
-interface User {
+export interface User {
   photo: string;
   name: string;
   gender: string;
@@ -21,7 +21,7 @@ interface User {
   title: string;
 }
 
-interface UserData {
+export interface UserData {
   picture: {
     medium: string;
   };
@@ -51,7 +51,7 @@ interface UserData {
   nat: string;
 }
 
-interface RandomUserData {
+export interface RandomUserData {
   results: UserData[];
 }
 

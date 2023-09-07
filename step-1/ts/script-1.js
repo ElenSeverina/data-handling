@@ -36,9 +36,9 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
     }
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.createUserTableRow = exports.removeErrorField = exports.removeUserTable = exports.normalizeData = exports.createErrorField = exports.createUserTableHeader = exports.createUserTable = void 0;
+exports.createUserTableRow = exports.removeErrorField = exports.removeUserTable = exports.normalizeData = exports.createErrorField = exports.createUserTableHeader = exports.createUserTable = exports.tableHead = void 0;
 var button = document.body.querySelector("button");
-var tableHead = [
+exports.tableHead = [
     "photo",
     "name",
     "gender",
@@ -57,7 +57,7 @@ exports.createUserTable = createUserTable;
 var createUserTableHeader = function () {
     var trHead = document.createElement("tr");
     var table = document.getElementById("user");
-    tableHead.forEach(function (name) {
+    exports.tableHead.forEach(function (name) {
         var thHead = document.createElement("th");
         thHead.innerText = String(name[0].toUpperCase() + name.slice(1));
         trHead.appendChild(thHead);
@@ -150,7 +150,7 @@ button.onclick = function () { return __awaiter(void 0, void 0, void 0, function
                 userData_1 = (0, exports.createUserTableRow)(user);
                 table = document.getElementById("user");
                 trRow_1 = document.createElement("tr");
-                tableHead.forEach(function (name) {
+                exports.tableHead.forEach(function (name) {
                     if (name === "username" || name === "title") {
                         return;
                     }

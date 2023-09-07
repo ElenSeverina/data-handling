@@ -6,8 +6,9 @@
       "ES2020",
       "ES2015"
     ],
-    "moduleResolution": "Node",
-    "module": "esnext",
-    "target": "esnext"
+    "target": "es6",
+    "module": "commonjs",
+    "esModuleInterop": true,
+    "moduleResolution": "node",
   }
 }
