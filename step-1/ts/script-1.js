@@ -1,4 +1,3 @@
-"use strict";
 var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
     function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
     return new (P || (P = Promise))(function (resolve, reject) {
@@ -35,146 +34,137 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
         if (op[0] & 5) throw op[1]; return { value: op[0] ? op[1] : void 0, done: true };
     }
 };
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.createUserTableRow = exports.removeErrorField = exports.removeUserTable = exports.normalizeData = exports.createErrorField = exports.createUserTableHeader = exports.createUserTable = exports.tableHead = void 0;
-var button = document.body.querySelector("button");
-exports.tableHead = [
-    "photo",
-    "name",
-    "gender",
-    "age",
-    "phone",
-    "address",
-    "email",
+var _this = this;
+var button = document.body.querySelector('button');
+var tableHead = [
+    'photo',
+    'name',
+    'gender',
+    'age',
+    'phone',
+    'address',
+    'email',
 ];
 var createUserTable = function () {
-    var table = document.createElement("table");
-    table.id = "user";
-    document.body.appendChild(table);
-    button.disabled = false;
+    var table = document.createElement('table');
+    table.id = 'user';
+    return table;
 };
-exports.createUserTable = createUserTable;
-var createUserTableHeader = function () {
-    var trHead = document.createElement("tr");
-    var table = document.getElementById("user");
-    exports.tableHead.forEach(function (name) {
-        var thHead = document.createElement("th");
-        thHead.innerText = String(name[0].toUpperCase() + name.slice(1));
-        trHead.appendChild(thHead);
+var createUserTableHeader = function (data) {
+    var trHead = document.createElement('tr');
+    data.forEach(function (name) {
+        var th = document.createElement('th');
+        th.innerText = String(name[0].toUpperCase() + name.slice(1));
+        trHead.appendChild(th);
     });
-    table.appendChild(trHead);
+    return trHead;
 };
-exports.createUserTableHeader = createUserTableHeader;
+var createUserTableRow = function (user, data) {
+    var trRow = document.createElement('tr');
+    data.forEach(function (name) {
+        if (name === 'username' || name === 'title') {
+            return;
+        }
+        var td = document.createElement('td');
+        if (name === 'photo') {
+            td.innerHTML = user[name];
+        }
+        else {
+            td.innerText = String(user[name]);
+        }
+        trRow.appendChild(td);
+    });
+    return trRow;
+};
 var createErrorField = function (obj) {
-    var error = document.createElement("div");
-    error.id = "error";
-    var preElement = document.createElement("pre");
+    var error = document.createElement('div');
+    error.id = 'error';
+    var preElement = document.createElement('pre');
     preElement.textContent = Object.keys(obj)
         .map(function (key) {
         var value = String(obj[key]);
-        if (key === "stack") {
-            value = value.replace(/\n/g, "\n\t");
+        if (key === 'stack') {
+            value = value.replace(/\n/g, '\n\t');
         }
         return "".concat(key, ": ").concat(value);
     })
-        .join("\n");
+        .join('\n');
     error.appendChild(preElement);
     document.body.appendChild(error);
 };
-exports.createErrorField = createErrorField;
-var normalizeData = function (str) {
-    return [str].flat(2).join(" ").replace(/ +/, " ").trim();
-};
-exports.normalizeData = normalizeData;
+var normalizeData = function (str) { return [str]
+    .flat(2)
+    .join(' ')
+    .replace(/ +/, ' ')
+    .trim(); };
+var getUserData = function (user) { return ({
+    photo: "<img src=\"".concat(user.picture.medium, "\" alt=\"").concat(user.login.username, "\" title=\"").concat(normalizeData([user.name.title, user.name.first, user.name.last, "[".concat(user.nat, "]")]), "\" />"),
+    name: normalizeData([user.name.first, user.name.last]),
+    gender: user.gender,
+    age: user.dob.age,
+    phone: user.cell,
+    address: normalizeData([
+        "".concat(String(user.location.street.number).trim(), ","),
+        user.location.street.name,
+        user.location.country,
+        "".concat(String(user.location.state).trim(), ","),
+        user.location.postcode,
+    ]),
+    email: user.email,
+    username: user.login.username,
+    title: normalizeData([user.name.title, user.name.first, user.name.last, "[".concat(user.nat, "]")]),
+}); };
 var removeUserTable = function () {
-    var table = document.getElementById("user");
+    var table = document.getElementById('user');
     if (table) {
         table.remove();
     }
 };
-exports.removeUserTable = removeUserTable;
 var removeErrorField = function () {
-    var errorField = document.getElementById("error");
+    var errorField = document.getElementById('error');
     if (errorField) {
         errorField.remove();
     }
 };
-exports.removeErrorField = removeErrorField;
-var createUserTableRow = function (user) {
-    return {
-        photo: "<img src=\"".concat(user.picture.medium, "\" alt=\"").concat(user.login.username, "\" title=\"").concat((0, exports.normalizeData)([user.name.title, user.name.first, user.name.last, "[".concat(user.nat, "]")]), "\" />"),
-        name: (0, exports.normalizeData)([user.name.first, user.name.last]),
-        gender: user.gender,
-        age: user.dob.age,
-        phone: user.cell,
-        address: (0, exports.normalizeData)([
-            "".concat(String(user.location.street.number).trim(), ","),
-            user.location.street.name,
-            user.location.country,
-            "".concat(String(user.location.state).trim(), ","),
-            user.location.postcode,
-        ]),
-        email: user.email,
-        username: user.login.username,
-        title: (0, exports.normalizeData)([user.name.title, user.name.first, user.name.last, "[".concat(user.nat, "]")]),
-    };
+var clearPreviousData = function () {
+    removeUserTable();
+    removeErrorField();
 };
-exports.createUserTableRow = createUserTableRow;
-button.onclick = function () { return __awaiter(void 0, void 0, void 0, function () {
-    var error, response, data, user, userData_1, table, trRow_1, e_1;
+button.onclick = function () { return __awaiter(_this, void 0, void 0, function () {
+    var error, response, data, user, table;
     return __generator(this, function (_a) {
         switch (_a.label) {
             case 0:
-                (0, exports.removeUserTable)();
-                (0, exports.removeErrorField)();
                 button.disabled = true;
                 error = {
                     status: 0,
                 };
-                _a.label = 1;
+                return [4 /*yield*/, fetch('https://randomuser.me/api/')];
             case 1:
-                _a.trys.push([1, 4, , 5]);
-                return [4 /*yield*/, fetch("https://randomuser.me/api/")];
-            case 2:
                 response = _a.sent();
-                if (!response.ok) {
-                    error.status = response.status;
-                    throw Error(response.statusText);
-                }
                 return [4 /*yield*/, response.json()];
-            case 3:
+            case 2:
                 data = _a.sent();
                 user = data.results[0];
-                (0, exports.createUserTable)();
-                (0, exports.createUserTableHeader)();
-                userData_1 = (0, exports.createUserTableRow)(user);
-                table = document.getElementById("user");
-                trRow_1 = document.createElement("tr");
-                exports.tableHead.forEach(function (name) {
-                    if (name === "username" || name === "title") {
-                        return;
+                try {
+                    if (!response.ok) {
+                        error.status = response.status;
+                        throw Error(response.statusText);
                     }
-                    var td = document.createElement("td");
-                    if (name === "photo") {
-                        td.innerHTML = userData_1[name];
-                    }
-                    else {
-                        td.innerText = String(userData_1[name]);
-                    }
-                    trRow_1.appendChild(td);
-                });
-                table.appendChild(trRow_1);
+                }
+                catch (e) {
+                    error.message = e.message;
+                    error.stack = e.stack;
+                    button.disabled = false;
+                    createErrorField(error);
+                }
+                clearPreviousData();
+                table = createUserTable();
+                table.appendChild(createUserTableHeader(tableHead));
+                table.appendChild(createUserTableRow(getUserData(user), tableHead));
                 document.body.appendChild(table);
                 button.disabled = false;
-                return [3 /*break*/, 5];
-            case 4:
-                e_1 = _a.sent();
-                error.message = e_1.message;
-                error.stack = e_1.stack;
-                button.disabled = false;
-                (0, exports.createErrorField)(error);
                 return [2 /*return*/];
-            case 5: return [2 /*return*/];
         }
     });
 }); };

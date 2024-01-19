@@ -1,14 +1,20 @@
 {
   "compilerOptions": {
-    "lib": [
-      "ES6",
-      "DOM",
-      "ES2020",
-      "ES2015"
-    ],
-    "target": "es6",
-    "module": "commonjs",
-    "esModuleInterop": true,
+    "outDir": "./dist",
+    "allowSyntheticDefaultImports": true,
     "moduleResolution": "node",
+    "resolveJsonModule": true,
+    "esModuleInterop": true,
+    "noImplicitAny": true,
+    "module": "ESNext",
+    "target": "ESNext",
+    "jsx": "react-jsx",
+    "allowJs": true,
+    "strict": true
+  },
+  "ts-node": {
+    "compilerOptions": {
+      "module": "CommonJS"
+    }
   }
 }

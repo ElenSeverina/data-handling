@@ -3,7 +3,7 @@
 }
 
 .loader {
-  display: none;
+  display: block;
   position: absolute;
   top: 13px;
   left: 60px;
@@ -52,4 +52,4 @@
   100% {
     transform: translateX(15px);
   }
-}/*# sourceMappingURL=style-step2.css.map */
+}/*# sourceMappingURL=style.css.map */
