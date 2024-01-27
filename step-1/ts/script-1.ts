@@ -92,7 +92,7 @@ const createUserTableRow = (user: any, data: string[]): HTMLTableRowElement => {
   return trRow;
 };
 
-const createErrorField = (obj: { [key: string]: any }): void => {
+const createErrorField = (obj: { [key: string]: any }): HTMLElement => {
   const error: HTMLElement = document.createElement('div');
   error.id = 'error';
   const preElement: HTMLElement = document.createElement('pre');
@@ -108,7 +108,7 @@ const createErrorField = (obj: { [key: string]: any }): void => {
     .join('\n');
 
   error.appendChild(preElement);
-  document.body.appendChild(error);
+  return error;
 };
 
 const normalizeData = (str: string[]): string => [str]
@@ -156,15 +156,15 @@ const clearPreviousData = (): void => {
 
 button.onclick = async (): Promise<void> => {
   button.disabled = true;
+  let data: any = {};
   const error: { status: number; message?: string; stack?: string } = {
     status: 0,
   };
 
-  const response: Response = await fetch('https://randomuser.me/api/');
-  const data: RandomUserData = await response.json();
-  const user: UserData = data.results[0];
-
   try {
+    const response: Response = await fetch('https://randomuser.me/api/');
+    data = await response.json();
+
     if (!response.ok) {
       error.status = response.status;
       throw Error(response.statusText);
@@ -173,8 +173,13 @@ button.onclick = async (): Promise<void> => {
     error.message = e.message;
     error.stack = e.stack;
     button.disabled = false;
-    createErrorField(error);
+    clearPreviousData();
+    document.body.appendChild(createErrorField(error));
+    return;
   }
+
+  const results: RandomUserData = data;
+  const user: UserData = results.results[0];
 
   clearPreviousData();
 

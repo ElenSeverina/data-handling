@@ -90,7 +90,7 @@ var createErrorField = function (obj) {
     })
         .join('\n');
     error.appendChild(preElement);
-    document.body.appendChild(error);
+    return error;
 };
 var normalizeData = function (str) { return [str]
     .flat(2)
@@ -131,33 +131,40 @@ var clearPreviousData = function () {
     removeErrorField();
 };
 button.onclick = function () { return __awaiter(_this, void 0, void 0, function () {
-    var error, response, data, user, table;
+    var data, error, response, e_1, results, user, table;
     return __generator(this, function (_a) {
         switch (_a.label) {
             case 0:
                 button.disabled = true;
+                data = {};
                 error = {
                     status: 0,
                 };
-                return [4 /*yield*/, fetch('https://randomuser.me/api/')];
+                _a.label = 1;
             case 1:
+                _a.trys.push([1, 4, , 5]);
+                return [4 /*yield*/, fetch('https://randomuser.me/api/')];
+            case 2:
                 response = _a.sent();
                 return [4 /*yield*/, response.json()];
-            case 2:
+            case 3:
                 data = _a.sent();
-                user = data.results[0];
-                try {
-                    if (!response.ok) {
-                        error.status = response.status;
-                        throw Error(response.statusText);
-                    }
+                if (!response.ok) {
+                    error.status = response.status;
+                    throw Error(response.statusText);
                 }
-                catch (e) {
-                    error.message = e.message;
-                    error.stack = e.stack;
-                    button.disabled = false;
-                    createErrorField(error);
-                }
+                return [3 /*break*/, 5];
+            case 4:
+                e_1 = _a.sent();
+                error.message = e_1.message;
+                error.stack = e_1.stack;
+                button.disabled = false;
+                clearPreviousData();
+                document.body.appendChild(createErrorField(error));
+                return [2 /*return*/];
+            case 5:
+                results = data;
+                user = results.results[0];
                 clearPreviousData();
                 table = createUserTable();
                 table.appendChild(createUserTableHeader(tableHead));
