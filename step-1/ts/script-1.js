@@ -156,8 +156,16 @@ button.onclick = function () { return __awaiter(_this, void 0, void 0, function 
                 return [3 /*break*/, 5];
             case 4:
                 e_1 = _a.sent();
-                error.message = e_1.message;
-                error.stack = e_1.stack;
+                if (e_1 instanceof Error) {
+                    error.message = e_1.message;
+                    error.stack = e_1.stack || '';
+                }
+                else if (typeof e_1 === 'string') {
+                    error.message = e_1;
+                }
+                else {
+                    error.message = 'An unknown error occurred.';
+                }
                 button.disabled = false;
                 clearPreviousData();
                 document.body.appendChild(createErrorField(error));

@@ -1,13 +1,4 @@
 const button: HTMLButtonElement = document.body.querySelector('button')!;
-const tableHead: string[] = [
-  'photo',
-  'name',
-  'gender',
-  'age',
-  'phone',
-  'address',
-  'email',
-];
 
 interface User {
   photo: string;
@@ -20,6 +11,16 @@ interface User {
   username: string;
   title: string;
 }
+
+const tableHead: (keyof User)[] = [
+  'photo',
+  'name',
+  'gender',
+  'age',
+  'phone',
+  'address',
+  'email',
+];
 
 interface UserData {
   picture: {
@@ -73,7 +74,7 @@ const createUserTableHeader = (data: string[]): HTMLTableRowElement => {
   return trHead;
 };
 
-const createUserTableRow = (user: any, data: string[]): HTMLTableRowElement => {
+const createUserTableRow = (user: User, data: (keyof User)[]): HTMLTableRowElement => {
   const trRow: HTMLTableRowElement = document.createElement('tr');
 
   data.forEach((name) => {
@@ -92,7 +93,11 @@ const createUserTableRow = (user: any, data: string[]): HTMLTableRowElement => {
   return trRow;
 };
 
-const createErrorField = (obj: { [key: string]: any }): HTMLElement => {
+const createErrorField = (obj: {
+  status: number;
+  message?: string;
+  stack?: string
+}): HTMLElement => {
   const error: HTMLElement = document.createElement('div');
   error.id = 'error';
   const preElement: HTMLElement = document.createElement('pre');
@@ -111,19 +116,19 @@ const createErrorField = (obj: { [key: string]: any }): HTMLElement => {
   return error;
 };
 
-const normalizeData = (str: string[]): string => [str]
+const normalizeUserData = (str: string[]): string => [str]
   .flat(2)
   .join(' ')
   .replace(/ +/, ' ')
   .trim();
 
 const getUserData = (user: UserData): User => ({
-  photo: `<img src="${user.picture.medium}" alt="${user.login.username}" title="${normalizeData([user.name.title, user.name.first, user.name.last, `[${user.nat}]`])}" />`,
-  name: normalizeData([user.name.first, user.name.last]),
+  photo: `<img src="${user.picture.medium}" alt="${user.login.username}" title="${normalizeUserData([user.name.title, user.name.first, user.name.last, `[${user.nat}]`])}" />`,
+  name: normalizeUserData([user.name.first, user.name.last]),
   gender: user.gender,
   age: user.dob.age,
   phone: user.cell,
-  address: normalizeData([
+  address: normalizeUserData([
     `${String(user.location.street.number).trim()},`,
     user.location.street.name,
     user.location.country,
@@ -132,31 +137,31 @@ const getUserData = (user: UserData): User => ({
   ]),
   email: user.email,
   username: user.login.username,
-  title: normalizeData([user.name.title, user.name.first, user.name.last, `[${user.nat}]`]),
+  title: normalizeUserData([user.name.title, user.name.first, user.name.last, `[${user.nat}]`]),
 });
 
-const removeUserTable = (): void => {
+const removeUserTable = () => {
   const table: HTMLElement | null = document.getElementById('user');
   if (table) {
     table.remove();
   }
 };
 
-const removeErrorField = (): void => {
+const removeErrorField = () => {
   const errorField: HTMLElement | null = document.getElementById('error');
   if (errorField) {
     errorField.remove();
   }
 };
 
-const clearPreviousData = (): void => {
+const removeErrorAndTableData = () => {
   removeUserTable();
   removeErrorField();
 };
 
 button.onclick = async (): Promise<void> => {
   button.disabled = true;
-  let data: any = {};
+  let data: RandomUserData = {} as RandomUserData;
   const error: { status: number; message?: string; stack?: string } = {
     status: 0,
   };
@@ -169,11 +174,18 @@ button.onclick = async (): Promise<void> => {
       error.status = response.status;
       throw Error(response.statusText);
     }
-  } catch (e: any) {
-    error.message = e.message;
-    error.stack = e.stack;
+  } catch (e: unknown) {
+    if (e instanceof Error) {
+      error.message = e.message;
+      error.stack = e.stack || '';
+    } else if (typeof e === 'string') {
+      error.message = e;
+    } else {
+      error.message = 'An unknown error occurred.';
+    }
+
     button.disabled = false;
-    clearPreviousData();
+    removeErrorAndTableData();
     document.body.appendChild(createErrorField(error));
     return;
   }
@@ -181,7 +193,7 @@ button.onclick = async (): Promise<void> => {
   const results: RandomUserData = data;
   const user: UserData = results.results[0];
 
-  clearPreviousData();
+  removeErrorAndTableData();
 
   const table: HTMLTableElement = createUserTable();
   table.appendChild(createUserTableHeader(tableHead));
