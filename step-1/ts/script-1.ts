@@ -12,7 +12,7 @@ interface User {
   title: string;
 }
 
-const tableHead: (keyof User)[] = [
+const tableColumnNames: (keyof User)[] = [
   'photo',
   'name',
   'gender',
@@ -57,53 +57,53 @@ interface RandomUserData {
 }
 
 const createUserTable = (): HTMLTableElement => {
-  const table: HTMLTableElement = document.createElement('table');
-  table.id = 'user';
-  return table;
+  const userTable: HTMLTableElement = document.createElement('table');
+  userTable.id = 'user';
+  return userTable;
 };
 
-const createUserTableHeader = (data: string[]): HTMLTableRowElement => {
-  const trHead: HTMLTableRowElement = document.createElement('tr');
+const createUserTableHeader = (tableHeaderData: string[]): HTMLTableRowElement => {
+  const headerRow: HTMLTableRowElement = document.createElement('tr');
 
-  data.forEach((name: string) => {
-    const th: HTMLTableCellElement = document.createElement('th');
-    th.innerText = String(name[0].toUpperCase() + name.slice(1));
-    trHead.appendChild(th);
+  tableHeaderData.forEach((columnName: string) => {
+    const columnHeader: HTMLTableCellElement = document.createElement('th');
+    columnHeader.innerText = String(columnName[0].toUpperCase() + columnName.slice(1));
+    headerRow.appendChild(columnHeader);
   });
 
-  return trHead;
+  return headerRow;
 };
 
-const createUserTableRow = (user: User, data: (keyof User)[]): HTMLTableRowElement => {
-  const trRow: HTMLTableRowElement = document.createElement('tr');
+const createUserTableRow = (user: User, columnNames: (keyof User)[]): HTMLTableRowElement => {
+  const userTableRow: HTMLTableRowElement = document.createElement('tr');
 
-  data.forEach((name) => {
-    if (name === 'username' || name === 'title') {
+  columnNames.forEach((columnName) => {
+    if (columnName === 'username' || columnName === 'title') {
       return;
     }
-    const td: HTMLTableCellElement = document.createElement('td');
-    if (name === 'photo') {
-      td.innerHTML = user[name];
+    const userTableCell: HTMLTableCellElement = document.createElement('td');
+    if (columnName === 'photo') {
+      userTableCell.innerHTML = user[columnName];
     } else {
-      td.innerText = String(user[name]);
+      userTableCell.innerText = String(user[columnName]);
     }
-    trRow.appendChild(td);
+    userTableRow.appendChild(userTableCell);
   });
 
-  return trRow;
+  return userTableRow;
 };
 
-const createErrorField = (obj: {
+const createErrorField = (errorData: {
   status: number;
   message?: string;
   stack?: string
 }): HTMLElement => {
-  const error: HTMLElement = document.createElement('div');
-  error.id = 'error';
-  const preElement: HTMLElement = document.createElement('pre');
-  preElement.textContent = Object.keys(obj)
+  const errorContainer: HTMLElement = document.createElement('div');
+  errorContainer.id = 'error';
+  const errorTextElement: HTMLElement = document.createElement('pre');
+  errorTextElement.textContent = Object.keys(errorData)
     .map((key: string) => {
-      let value: string = String(obj[key]);
+      let value: string = String(errorData[key]);
 
       if (key === 'stack') {
         value = value.replace(/\n/g, '\n\t');
@@ -112,38 +112,44 @@ const createErrorField = (obj: {
     })
     .join('\n');
 
-  error.appendChild(preElement);
-  return error;
+  errorContainer.appendChild(errorTextElement);
+  return errorContainer;
 };
 
-const normalizeUserData = (str: string[]): string => [str]
+const normalizeUserData = (userDataArray: string[]): string => [userDataArray]
   .flat(2)
   .join(' ')
   .replace(/ +/, ' ')
   .trim();
 
-const getUserData = (user: UserData): User => ({
-  photo: `<img src="${user.picture.medium}" alt="${user.login.username}" title="${normalizeUserData([user.name.title, user.name.first, user.name.last, `[${user.nat}]`])}" />`,
-  name: normalizeUserData([user.name.first, user.name.last]),
-  gender: user.gender,
-  age: user.dob.age,
-  phone: user.cell,
+const getUserData = (userData: UserData): User => ({
+  photo: `<img src="${userData.picture.medium}" 
+  alt="${userData.login.username}" 
+  title="${normalizeUserData([
+    userData.name.title, userData.name.first, userData.name.last, `[${userData.nat}]`,
+  ])}" />`,
+  name: normalizeUserData([userData.name.first, userData.name.last]),
+  gender: userData.gender,
+  age: userData.dob.age,
+  phone: userData.cell,
   address: normalizeUserData([
-    `${String(user.location.street.number).trim()},`,
-    user.location.street.name,
-    user.location.country,
-    `${String(user.location.state).trim()},`,
-    user.location.postcode,
+    `${String(userData.location.street.number).trim()},`,
+    userData.location.street.name,
+    userData.location.country,
+    `${String(userData.location.state).trim()},`,
+    userData.location.postcode,
   ]),
-  email: user.email,
-  username: user.login.username,
-  title: normalizeUserData([user.name.title, user.name.first, user.name.last, `[${user.nat}]`]),
+  email: userData.email,
+  username: userData.login.username,
+  title: normalizeUserData([
+    userData.name.title, userData.name.first, userData.name.last, `[${userData.nat}
+  ]`]),
 });
 
 const removeUserTable = () => {
-  const table: HTMLElement | null = document.getElementById('user');
-  if (table) {
-    table.remove();
+  const userTable: HTMLElement | null = document.getElementById('user');
+  if (userTable) {
+    userTable.remove();
   }
 };
 
@@ -161,44 +167,44 @@ const removeErrorAndTableData = () => {
 
 button.onclick = async (): Promise<void> => {
   button.disabled = true;
-  let data: RandomUserData = {} as RandomUserData;
-  const error: { status: number; message?: string; stack?: string } = {
+  let userDataResponse: RandomUserData = {} as RandomUserData;
+  const errorData: { status: number; message?: string; stack?: string } = {
     status: 0,
   };
 
   try {
     const response: Response = await fetch('https://randomuser.me/api/');
-    data = await response.json();
+    userDataResponse = await response.json();
 
     if (!response.ok) {
-      error.status = response.status;
+      errorData.status = response.status;
       throw Error(response.statusText);
     }
   } catch (e: unknown) {
     if (e instanceof Error) {
-      error.message = e.message;
-      error.stack = e.stack || '';
+      errorData.message = e.message;
+      errorData.stack = e.stack || '';
     } else if (typeof e === 'string') {
-      error.message = e;
+      errorData.message = e;
     } else {
-      error.message = 'An unknown error occurred.';
+      errorData.message = 'An unknown error occurred.';
     }
 
     button.disabled = false;
     removeErrorAndTableData();
-    document.body.appendChild(createErrorField(error));
+    document.body.appendChild(createErrorField(errorData));
     return;
   }
 
-  const results: RandomUserData = data;
-  const user: UserData = results.results[0];
+  const userDataResults: RandomUserData = userDataResponse;
+  const user: UserData = userDataResults.results[0];
 
   removeErrorAndTableData();
 
-  const table: HTMLTableElement = createUserTable();
-  table.appendChild(createUserTableHeader(tableHead));
-  table.appendChild(createUserTableRow(getUserData(user), tableHead));
-  document.body.appendChild(table);
+  const userTable: HTMLTableElement = createUserTable();
+  userTable.appendChild(createUserTableHeader(tableColumnNames));
+  userTable.appendChild(createUserTableRow(getUserData(user), tableColumnNames));
+  document.body.appendChild(userTable);
 
   button.disabled = false;
 };

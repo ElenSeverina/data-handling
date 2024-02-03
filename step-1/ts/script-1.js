@@ -36,7 +36,7 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
 };
 var _this = this;
 var button = document.body.querySelector('button');
-var tableHead = [
+var tableColumnNames = [
     'photo',
     'name',
     'gender',
@@ -46,78 +46,84 @@ var tableHead = [
     'email',
 ];
 var createUserTable = function () {
-    var table = document.createElement('table');
-    table.id = 'user';
-    return table;
+    var userTable = document.createElement('table');
+    userTable.id = 'user';
+    return userTable;
 };
-var createUserTableHeader = function (data) {
-    var trHead = document.createElement('tr');
-    data.forEach(function (name) {
-        var th = document.createElement('th');
-        th.innerText = String(name[0].toUpperCase() + name.slice(1));
-        trHead.appendChild(th);
+var createUserTableHeader = function (tableHeaderData) {
+    var headerRow = document.createElement('tr');
+    tableHeaderData.forEach(function (columnName) {
+        var columnHeader = document.createElement('th');
+        columnHeader.innerText = String(columnName[0].toUpperCase() + columnName.slice(1));
+        headerRow.appendChild(columnHeader);
     });
-    return trHead;
+    return headerRow;
 };
-var createUserTableRow = function (user, data) {
-    var trRow = document.createElement('tr');
-    data.forEach(function (name) {
-        if (name === 'username' || name === 'title') {
+var createUserTableRow = function (user, columnNames) {
+    var userTableRow = document.createElement('tr');
+    columnNames.forEach(function (columnName) {
+        if (columnName === 'username' || columnName === 'title') {
             return;
         }
-        var td = document.createElement('td');
-        if (name === 'photo') {
-            td.innerHTML = user[name];
+        var userTableCell = document.createElement('td');
+        if (columnName === 'photo') {
+            userTableCell.innerHTML = user[columnName];
         }
         else {
-            td.innerText = String(user[name]);
+            userTableCell.innerText = String(user[columnName]);
         }
-        trRow.appendChild(td);
+        userTableRow.appendChild(userTableCell);
     });
-    return trRow;
+    return userTableRow;
 };
-var createErrorField = function (obj) {
-    var error = document.createElement('div');
-    error.id = 'error';
-    var preElement = document.createElement('pre');
-    preElement.textContent = Object.keys(obj)
+var createErrorField = function (errorData) {
+    var errorContainer = document.createElement('div');
+    errorContainer.id = 'error';
+    var errorTextElement = document.createElement('pre');
+    errorTextElement.textContent = Object.keys(errorData)
         .map(function (key) {
-        var value = String(obj[key]);
+        var value = String(errorData[key]);
         if (key === 'stack') {
             value = value.replace(/\n/g, '\n\t');
         }
         return "".concat(key, ": ").concat(value);
     })
         .join('\n');
-    error.appendChild(preElement);
-    return error;
+    errorContainer.appendChild(errorTextElement);
+    return errorContainer;
 };
-var normalizeData = function (str) { return [str]
+var normalizeUserData = function (userDataArray) { return [userDataArray]
     .flat(2)
     .join(' ')
     .replace(/ +/, ' ')
     .trim(); };
-var getUserData = function (user) { return ({
-    photo: "<img src=\"".concat(user.picture.medium, "\" alt=\"").concat(user.login.username, "\" title=\"").concat(normalizeData([user.name.title, user.name.first, user.name.last, "[".concat(user.nat, "]")]), "\" />"),
-    name: normalizeData([user.name.first, user.name.last]),
-    gender: user.gender,
-    age: user.dob.age,
-    phone: user.cell,
-    address: normalizeData([
-        "".concat(String(user.location.street.number).trim(), ","),
-        user.location.street.name,
-        user.location.country,
-        "".concat(String(user.location.state).trim(), ","),
-        user.location.postcode,
+var getUserData = function (userData) { return ({
+    photo: "<img src=\"".concat(userData.picture.medium, "\" \n  alt=\"").concat(userData.login.username, "\" \n  title=\"").concat(normalizeUserData([
+        userData.name.title, userData.name.first, userData.name.last,
+        "[".concat(userData.nat, "]"),
+    ]), "\" />"),
+    name: normalizeUserData([userData.name.first, userData.name.last]),
+    gender: userData.gender,
+    age: userData.dob.age,
+    phone: userData.cell,
+    address: normalizeUserData([
+        "".concat(String(userData.location.street.number).trim(), ","),
+        userData.location.street.name,
+        userData.location.country,
+        "".concat(String(userData.location.state).trim(), ","),
+        userData.location.postcode,
     ]),
-    email: user.email,
-    username: user.login.username,
-    title: normalizeData([user.name.title, user.name.first, user.name.last, "[".concat(user.nat, "]")]),
+    email: userData.email,
+    username: userData.login.username,
+    title: normalizeUserData([
+        userData.name.title, userData.name.first, userData.name.last,
+        "[".concat(userData.nat, "\n  ]")
+    ]),
 }); };
 var removeUserTable = function () {
-    var table = document.getElementById('user');
-    if (table) {
-        table.remove();
+    var userTable = document.getElementById('user');
+    if (userTable) {
+        userTable.remove();
     }
 };
 var removeErrorField = function () {
@@ -126,18 +132,18 @@ var removeErrorField = function () {
         errorField.remove();
     }
 };
-var clearPreviousData = function () {
+var removeErrorAndTableData = function () {
     removeUserTable();
     removeErrorField();
 };
 button.onclick = function () { return __awaiter(_this, void 0, void 0, function () {
-    var data, error, response, e_1, results, user, table;
+    var userDataResponse, errorData, response, e_1, userDataResults, user, userTable;
     return __generator(this, function (_a) {
         switch (_a.label) {
             case 0:
                 button.disabled = true;
-                data = {};
-                error = {
+                userDataResponse = {};
+                errorData = {
                     status: 0,
                 };
                 _a.label = 1;
@@ -148,36 +154,36 @@ button.onclick = function () { return __awaiter(_this, void 0, void 0, function 
                 response = _a.sent();
                 return [4 /*yield*/, response.json()];
             case 3:
-                data = _a.sent();
+                userDataResponse = _a.sent();
                 if (!response.ok) {
-                    error.status = response.status;
+                    errorData.status = response.status;
                     throw Error(response.statusText);
                 }
                 return [3 /*break*/, 5];
             case 4:
                 e_1 = _a.sent();
                 if (e_1 instanceof Error) {
-                    error.message = e_1.message;
-                    error.stack = e_1.stack || '';
+                    errorData.message = e_1.message;
+                    errorData.stack = e_1.stack || '';
                 }
                 else if (typeof e_1 === 'string') {
-                    error.message = e_1;
+                    errorData.message = e_1;
                 }
                 else {
-                    error.message = 'An unknown error occurred.';
+                    errorData.message = 'An unknown error occurred.';
                 }
                 button.disabled = false;
-                clearPreviousData();
-                document.body.appendChild(createErrorField(error));
+                removeErrorAndTableData();
+                document.body.appendChild(createErrorField(errorData));
                 return [2 /*return*/];
             case 5:
-                results = data;
-                user = results.results[0];
-                clearPreviousData();
-                table = createUserTable();
-                table.appendChild(createUserTableHeader(tableHead));
-                table.appendChild(createUserTableRow(getUserData(user), tableHead));
-                document.body.appendChild(table);
+                userDataResults = userDataResponse;
+                user = userDataResults.results[0];
+                removeErrorAndTableData();
+                userTable = createUserTable();
+                userTable.appendChild(createUserTableHeader(tableColumnNames));
+                userTable.appendChild(createUserTableRow(getUserData(user), tableColumnNames));
+                document.body.appendChild(userTable);
                 button.disabled = false;
                 return [2 /*return*/];
         }
