@@ -62,16 +62,17 @@ const createUserTable = (): HTMLTableElement => {
   return userTable;
 };
 
-const createUserTableHeader = (tableHeaderData: string[]): HTMLTableRowElement => {
-  const headerRow: HTMLTableRowElement = document.createElement('tr');
+const createUserTableHeader = (): HTMLTableRowElement => document.createElement('tr');
 
-  tableHeaderData.forEach((columnName: string) => {
-    const columnHeader: HTMLTableCellElement = document.createElement('th');
-    columnHeader.innerText = String(columnName[0].toUpperCase() + columnName.slice(1));
-    headerRow.appendChild(columnHeader);
+const fillUserTableHeader = (headerRowElement: HTMLTableRowElement, columnNames: string[])
+: HTMLTableRowElement => {
+  columnNames.forEach((columnName: string) => {
+    const tableHeaderCell: HTMLTableCellElement = document.createElement('th');
+    tableHeaderCell.innerText = String(columnName[0].toUpperCase() + columnName.slice(1));
+    headerRowElement.appendChild(tableHeaderCell);
   });
 
-  return headerRow;
+  return headerRowElement;
 };
 
 const createUserTableRow = (user: User, columnNames: (keyof User)[]): HTMLTableRowElement => {
@@ -202,7 +203,7 @@ button.onclick = async (): Promise<void> => {
   removeErrorAndTableData();
 
   const userTable: HTMLTableElement = createUserTable();
-  userTable.appendChild(createUserTableHeader(tableColumnNames));
+  userTable.appendChild(fillUserTableHeader(createUserTableHeader(), tableColumnNames));
   userTable.appendChild(createUserTableRow(getUserData(user), tableColumnNames));
   document.body.appendChild(userTable);
 

@@ -50,14 +50,14 @@ var createUserTable = function () {
     userTable.id = 'user';
     return userTable;
 };
-var createUserTableHeader = function (tableHeaderData) {
-    var headerRow = document.createElement('tr');
-    tableHeaderData.forEach(function (columnName) {
-        var columnHeader = document.createElement('th');
-        columnHeader.innerText = String(columnName[0].toUpperCase() + columnName.slice(1));
-        headerRow.appendChild(columnHeader);
+var createUserTableHeader = function () { return document.createElement('tr'); };
+var fillUserTableHeader = function (headerRowElement, columnNames) {
+    columnNames.forEach(function (columnName) {
+        var tableHeaderCell = document.createElement('th');
+        tableHeaderCell.innerText = String(columnName[0].toUpperCase() + columnName.slice(1));
+        headerRowElement.appendChild(tableHeaderCell);
     });
-    return headerRow;
+    return headerRowElement;
 };
 var createUserTableRow = function (user, columnNames) {
     var userTableRow = document.createElement('tr');
@@ -181,7 +181,7 @@ button.onclick = function () { return __awaiter(_this, void 0, void 0, function 
                 user = userDataResults.results[0];
                 removeErrorAndTableData();
                 userTable = createUserTable();
-                userTable.appendChild(createUserTableHeader(tableColumnNames));
+                userTable.appendChild(fillUserTableHeader(createUserTableHeader(), tableColumnNames));
                 userTable.appendChild(createUserTableRow(getUserData(user), tableColumnNames));
                 document.body.appendChild(userTable);
                 button.disabled = false;
