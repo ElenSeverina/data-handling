@@ -1,18 +1,28 @@
-const button: HTMLButtonElement = document.body.querySelector('button')!;
+const button: HTMLButtonElement = document.body.querySelector('button') as HTMLButtonElement;
+
+type UserPhoto = HTMLElement;
+type UserName = string;
+type UserGender = 'male' | 'female' | 'other';
+type UserAge = number;
+type UserPhone = string;
+type UserAddress = string;
+type UserEmail = string;
+type UserTitle= string;
+type UserTableColumnNames = string[];
 
 interface User {
-  photo: string;
-  name: string;
-  gender: string;
-  age: number;
-  phone: string;
-  address: string;
-  email: string;
-  username: string;
-  title: string;
+  photo: UserPhoto;
+  name: UserName;
+  gender: UserGender;
+  age: UserAge;
+  phone: UserPhone;
+  address: UserAddress;
+  email: UserEmail;
+  username: UserName;
+  title: UserTitle;
 }
 
-const tableColumnNames: (keyof User)[] = [
+const tableColumnNames: UserTableColumnNames = [
   'photo',
   'name',
   'gender',
@@ -31,11 +41,11 @@ interface UserData {
     last: string;
     title: string;
   };
-  gender: string;
+  gender: UserGender;
   dob: {
-    age: number;
+    age: UserAge;
   };
-  cell: string;
+  cell: UserPhone;
   location: {
     street: {
       number: number;
@@ -45,9 +55,9 @@ interface UserData {
     state: string;
     postcode: string;
   };
-  email: string;
+  email: UserEmail;
   login: {
-    username: string;
+    username: UserName;
   };
   nat: string;
 }
@@ -62,20 +72,19 @@ const createUserTable = (): HTMLTableElement => {
   return userTable;
 };
 
-const createUserTableHeader = (): HTMLTableRowElement => document.createElement('tr');
+const createUserTableHeader = (tableHeaderData: UserTableColumnNames): HTMLTableRowElement => {
+  const headerRow: HTMLTableRowElement = document.createElement('tr');
 
-const fillUserTableHeader = (headerRowElement: HTMLTableRowElement, columnNames: string[])
-: HTMLTableRowElement => {
-  columnNames.forEach((columnName: string) => {
-    const tableHeaderCell: HTMLTableCellElement = document.createElement('th');
-    tableHeaderCell.innerText = String(columnName[0].toUpperCase() + columnName.slice(1));
-    headerRowElement.appendChild(tableHeaderCell);
+  tableHeaderData.forEach((columnName) => {
+    const columnHeader: HTMLTableCellElement = document.createElement('th');
+    columnHeader.innerText = String(columnName[0].toUpperCase() + columnName.slice(1));
+    headerRow.appendChild(columnHeader);
   });
 
-  return headerRowElement;
+  return headerRow;
 };
 
-const createUserTableRow = (user: User, columnNames: (keyof User)[]): HTMLTableRowElement => {
+const createUserTableRow = (user: User, columnNames: UserTableColumnNames): HTMLTableRowElement => {
   const userTableRow: HTMLTableRowElement = document.createElement('tr');
 
   columnNames.forEach((columnName) => {
@@ -84,7 +93,7 @@ const createUserTableRow = (user: User, columnNames: (keyof User)[]): HTMLTableR
     }
     const userTableCell: HTMLTableCellElement = document.createElement('td');
     if (columnName === 'photo') {
-      userTableCell.innerHTML = user[columnName];
+      userTableCell.appendChild(user[columnName]);
     } else {
       userTableCell.innerText = String(user[columnName]);
     }
@@ -123,14 +132,24 @@ const normalizeUserData = (userDataArray: string[]): string => [userDataArray]
   .replace(/ +/, ' ')
   .trim();
 
+const createPhotoElement = (userData: UserData) => {
+  const imgElement: HTMLImageElement = document.createElement('img');
+  imgElement.src = userData.picture.medium;
+  imgElement.alt = userData.login.username;
+  const titleData = [
+    userData.name.title,
+    userData.name.first,
+    userData.name.last,
+    `[${userData.nat}]`,
+  ];
+  imgElement.title = normalizeUserData(titleData);
+  return imgElement;
+};
+
 const getUserData = (userData: UserData): User => ({
-  photo: `<img src="${userData.picture.medium}" 
-  alt="${userData.login.username}" 
-  title="${normalizeUserData([
-    userData.name.title, userData.name.first, userData.name.last, `[${userData.nat}]`,
-  ])}" />`,
+  photo: createPhotoElement(userData),
   name: normalizeUserData([userData.name.first, userData.name.last]),
-  gender: userData.gender,
+  gender: userData.gender as UserGender,
   age: userData.dob.age,
   phone: userData.cell,
   address: normalizeUserData([
@@ -203,7 +222,7 @@ button.onclick = async (): Promise<void> => {
   removeErrorAndTableData();
 
   const userTable: HTMLTableElement = createUserTable();
-  userTable.appendChild(fillUserTableHeader(createUserTableHeader(), tableColumnNames));
+  userTable.appendChild(createUserTableHeader(tableColumnNames));
   userTable.appendChild(createUserTableRow(getUserData(user), tableColumnNames));
   document.body.appendChild(userTable);
 
